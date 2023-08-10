@@ -5,8 +5,7 @@ import { NgForm } from '@angular/forms';
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
-})
-export class SignupComponent {
+})export class SignupComponent {
 
   onSubmit(form: NgForm) {
     console.log(form.value);
