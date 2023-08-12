@@ -5,8 +5,7 @@
     #form="ngForm"
     (ngSubmit)="onSubmit(form)"
   >
-    <mat-form-field
-    >
+    <mat-form-field>
       <input
         matInput
         type="email"
@@ -17,12 +16,10 @@
         name="email"
         email
         required
-    />
+      />
       <mat-error>Set your email</mat-error>
-  </mat-form-field>
-    <mat-form-field
-      hintLabel="Should be least 8 characters long."
-    >
+    </mat-form-field>
+    <mat-form-field hintLabel="Should be least 8 characters long.">
       <input
         matInput
         type="password"
@@ -35,9 +32,21 @@
         required
         #passwordInput="ngModel"
       />
-      <mat-hint align="end">{{ passwordInput.value?.legth}} / 8</mat-hint>
+      <mat-hint align="end">{{ passwordInput.value?.legth }} / 8</mat-hint>
       <mat-error>Set your password</mat-error>
     </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Your birthdate</mat-label>
+      <input matInput [matDatepicker]="picker" [max]="maxDate" />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
     <button type="submit" mat-raised-button color="primary">Submit</button>
   </form>
 </section>
