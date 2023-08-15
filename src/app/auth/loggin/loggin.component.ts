@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-loggin',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrls: ['./loggin.component.css']
 })
 export class LogginComponent {
-
+  email = new FormControl('');
+  password = new FormControl('');
 }
