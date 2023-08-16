@@ -5,7 +5,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule } from '@angular/forms';
 
 import { MaterialModule } from './material.module';
 
@@ -16,6 +15,7 @@ import { CurrentTraningComponent } from './trainnig/current-traning/current-tran
 import { NewTrainingComponent } from './trainnig/new-training/new-training.component';
 import { PastTrainingsComponent } from './trainnig/past-trainings/past-trainings.component';
 import { WelcomeComponent } from './welcome/welcome.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
