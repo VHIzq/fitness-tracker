@@ -1,0 +1,9 @@
+a {
+    color: whitesmoke;
+    text-decoration: none;
+}
+
+a:hover,
+a:active {
+    color: lightgray;
+}
