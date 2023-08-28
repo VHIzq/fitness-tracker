@@ -1,7 +1,6 @@
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -18,6 +17,7 @@ import { WelcomeComponent } from './welcome/welcome.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
 import { HeaderComponent } from './navigation/header/header.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -39,6 +39,7 @@ import { HeaderComponent } from './navigation/header/header.component';
     FlexLayoutModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
