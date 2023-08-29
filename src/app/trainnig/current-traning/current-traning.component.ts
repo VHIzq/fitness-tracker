@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { StopTrainingComponent } from './stop-traning.component';
 
@@ -8,12 +8,11 @@ import { StopTrainingComponent } from './stop-traning.component';
   styleUrls: ['./current-traning.component.css'],
 })
 export class CurrentTraningComponent implements OnInit {
+  @Output() trainingExit = new EventEmitter();
   progress = 0;
   timer!: number;
 
-  constructor(
-    private dialog: MatDialog
-  ) {}
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.setupSpinner();
@@ -25,8 +24,8 @@ export class CurrentTraningComponent implements OnInit {
   public setupSpinner() {
     this.timer = setInterval(() => {
       this.progress = this.progress + 5;
-      const isMoreThanFive = this.timer >= 5;
-      if (isMoreThanFive) {
+      const isMoreThanOneHundred = this.timer >= 100;
+      if (isMoreThanOneHundred) {
         clearInterval(this.timer);
       }
     }, 1000);
@@ -34,6 +33,18 @@ export class CurrentTraningComponent implements OnInit {
 
   onStop() {
     clearInterval(this.timer);
-    this.dialog.open(StopTrainingComponent); 
+    const dialogRef = this.dialog.open(StopTrainingComponent, {
+      data: {
+        process: this.progress,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.trainingExit.emit();
+      } else {
+        this.setupSpinner();
+      }
+    });
   }
 }
