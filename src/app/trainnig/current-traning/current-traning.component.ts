@@ -9,6 +9,7 @@ import { StopTrainingComponent } from './stop-traning.component';
 })
 export class CurrentTraningComponent implements OnInit {
   @Output() trainingExit = new EventEmitter();
+
   progress = 0;
   timer!: number;
 
@@ -36,7 +37,7 @@ export class CurrentTraningComponent implements OnInit {
     const dialogRef = this.dialog.open(StopTrainingComponent, {
       data: {
         process: this.progress,
-      }
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
