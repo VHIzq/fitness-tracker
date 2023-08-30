@@ -19,6 +19,7 @@ import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.com
 import { HeaderComponent } from './navigation/header/header.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AuthService } from './auth/auth.service';
+import { TrainingService } from './trainnig/training.service';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { AuthService } from './auth/auth.service';
     ReactiveFormsModule,
     MatDialogModule,
   ],
-  providers: [AuthService],
+  providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
