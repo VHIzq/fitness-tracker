@@ -31,4 +31,9 @@ export class TrainingService {
       //* add mat dialog
     }
   }
+
+  getRunningExercise() {
+    return { ...this.runningExercise };
+  }
+
 }

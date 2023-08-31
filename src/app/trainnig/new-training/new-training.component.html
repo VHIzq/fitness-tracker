@@ -11,7 +11,7 @@
         </mat-select>
       </mat-form-field>
       <mat-card-actions fxLayoutAlign="center">
-        <button type="submit" mat-button="mat-button" (click)="onStartTraining()" [disabled]="f.invalid">Start</button>
+        <button type="submit" mat-button="mat-button" (click)="onStartTraining(f)" [disabled]="f.invalid">Start</button>
       </mat-card-actions>
     </mat-card>
   </form>
