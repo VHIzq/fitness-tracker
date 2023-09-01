@@ -14,9 +14,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDialogModule } from '@angular/material/dialog';
+import { StopTrainingComponent } from './trainnig/current-traning/stop-traning.component';
 
 
 @NgModule({
+  declarations: [
+    StopTrainingComponent
+  ],
   imports: [
     MatIconModule,
     MatButtonModule,
