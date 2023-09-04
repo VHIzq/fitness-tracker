@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 @Injectable()
 export class TrainingService {
   exerciseChange = new Subject<Exercise>();
-  exercises!: Array<Exercise>;
+  exercises: Array<Exercise> = [];
 
   private runningExercise!: Exercise;
   private availableExercises: Exercise[] = [
@@ -34,25 +34,26 @@ export class TrainingService {
   }
 
   completeExercises() {
-    this.exercises.push({
+    this.exercises?.push({
       ...this.runningExercise,
       date: new Date(),
       state: 'completed',
     });
-    this.runningExercise = null;
-    this.exerciseChange.next(null);
+    this.runningExercise = null!;
+    this.exerciseChange.next(null!);
   }
 
   cancelExercise(progress: number) {
-    this.exercises.push({
+    this.exercises?.push({
       ...this.runningExercise,
       date: new Date(),
       duration: this.runningExercise.duration * (progress / 100),
       calories: this.runningExercise.calories * (progress / 100),
       state: 'cancelled',
     });
-    this.runningExercise = null;
-    this.exerciseChange.next(null);
+    this.runningExercise = null!;
+    this.exerciseChange.next(null!);
+    console.log(this.exercises);
   }
 
   getRunningExercise() {

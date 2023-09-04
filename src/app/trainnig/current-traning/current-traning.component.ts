@@ -20,18 +20,19 @@ export class CurrentTraningComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.setupSpinner();
+    this.startOrResumeTimer();
   }
 
-  public setupSpinner() {
+  public startOrResumeTimer() {
     const duration = this.trainingService.getRunningExercise().duration;
     if (!duration) return;
 
     const step =  duration / 100 * 1000;
     this.timer = setInterval(() => {
       this.progress = this.progress + 1;
-      const isMoreThanOneHundred = this.timer >= 100;
+      const isMoreThanOneHundred = this.progress >= 100;
       if (isMoreThanOneHundred) {
+        this.trainingService.completeExercises();
         clearInterval(this.timer);
       }
     }, step);
@@ -47,9 +48,9 @@ export class CurrentTraningComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.trainingExit.emit();
+        this.trainingService.cancelExercise(this.progress);
       } else {
-        this.setupSpinner();
+        this.startOrResumeTimer();
       }
     });
   }
