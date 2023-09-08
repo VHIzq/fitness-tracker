@@ -26,4 +26,7 @@ export class NewTrainingComponent implements OnInit {
   setListExcersies() {
     this.exercisesAvailable = this.trainingService.getTrainingExercises();
   }
+
+
+  public getCollectionFromDB() {}
 }
