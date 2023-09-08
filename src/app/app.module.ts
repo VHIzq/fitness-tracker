@@ -7,8 +7,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { MaterialModule } from './material.module';
 
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
 import { SignupComponent } from './auth/signup/signup.component';
 import { LogginComponent } from './auth/loggin/loggin.component';
@@ -23,6 +21,10 @@ import { HeaderComponent } from './navigation/header/header.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { AuthService } from './auth/auth.service';
 import { TrainingService } from './trainnig/training.service';
+import { environment } from '../environments/environment';
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+
 
 @NgModule({
   declarations: [
@@ -48,6 +50,8 @@ import { TrainingService } from './trainnig/training.service';
     provideFirebaseApp(() => initializeApp({  })),
     provideFirestore(() => getFirestore()),
 
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore()),
   ],
   providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],
