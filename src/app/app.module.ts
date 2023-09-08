@@ -47,9 +47,6 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    provideFirebaseApp(() => initializeApp({  })),
-    provideFirestore(() => getFirestore()),
-
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
   ],
