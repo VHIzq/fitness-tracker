@@ -7,6 +7,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { MaterialModule } from './material.module';
 
+import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+
 import { SignupComponent } from './auth/signup/signup.component';
 import { LogginComponent } from './auth/loggin/loggin.component';
 import { TrainnigComponent } from './trainnig/trainnig.component';
@@ -42,6 +45,9 @@ import { TrainingService } from './trainnig/training.service';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
+    provideFirebaseApp(() => initializeApp({  })),
+    provideFirestore(() => getFirestore()),
+
   ],
   providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],
