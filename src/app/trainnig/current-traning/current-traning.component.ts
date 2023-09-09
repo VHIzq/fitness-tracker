@@ -28,7 +28,7 @@ export class CurrentTraningComponent implements OnInit {
     if (!duration) return;
 
     const step =  duration / 100 * 1000;
-    this.timer = setInterval(() => {
+    this.timer = window.setInterval(() => {
       this.progress = this.progress + 1;
       const isMoreThanOneHundred = this.progress >= 100;
       if (isMoreThanOneHundred) {
