@@ -20,8 +20,7 @@ export class NewTrainingComponent implements OnInit {
     private trainingService: TrainingService,
     private fireStore: Firestore
   ) {
-    const collectionsRef = collection(this.fireStore, 'availableExercises');
-    this.availableExercises$ = collectionData(collectionsRef);
+    this.getCollectionsFromDB();
   }
 
   ngOnInit(): void {
@@ -38,6 +37,9 @@ export class NewTrainingComponent implements OnInit {
   }
 
   getCollectionsFromDB() {
+    const collectionsRef = collection(this.fireStore, 'availableExercises');
+    this.availableExercises$ = collectionData(collectionsRef);
+
     this.availableExercises$.subscribe((item) => {
       console.log(item);
     });
