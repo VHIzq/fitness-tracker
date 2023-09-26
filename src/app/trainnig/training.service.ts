@@ -8,17 +8,20 @@ import { Exercise } from './exercise.model';
 export class TrainingService {
   exerciseChange = new Subject<Exercise>();
   exercisesChanged = new Subject<any>();
-  exercises: Array<Exercise> = [];
-  availableExercises$!: Observable<any>;
-
+  finishedExercisesChanged = new Subject<Array<Exercise>>();
+  private availableExercises$!: Observable<any>;
+  private finishedExercises$!: Observable<any>;
   private runningExercise!: Exercise;
   private availableExercises: Array<Exercise> = [];
 
   constructor(private fireStore: Firestore) {}
 
   fetchAvailableExercises() {
-    const collectionsRef = collection(this.fireStore, 'availableExercises');
-    this.availableExercises$ = collectionData(collectionsRef);
+    const availableExercisesRef = collection(
+      this.fireStore,
+      'availableExercises'
+    );
+    this.availableExercises$ = collectionData(availableExercisesRef);
     this.availableExercises$
       .pipe(
         map((docArray) => {
@@ -32,10 +35,11 @@ export class TrainingService {
             };
           });
         })
-      ).subscribe((exercises: Array<Exercise>) => {
+      )
+      .subscribe((exercises: Array<Exercise>) => {
         this.availableExercises = exercises;
-        this.exercisesChanged.next([...this.availableExercises])
-      })
+        this.exercisesChanged.next([...this.availableExercises]);
+      });
   }
 
   startExercise(selectedId: string) {
@@ -53,23 +57,25 @@ export class TrainingService {
   }
 
   completeExercises() {
-    this.addDataToDataBase({
+    const newExercise: Exercise = {
       ...this.runningExercise,
       date: new Date(),
       state: 'completed',
-    });
+    };
+    this.addDataToDataBase(newExercise);
     this.runningExercise = null!;
     this.exerciseChange.next(null!);
   }
 
   cancelExercise(progress: number) {
-    this.addDataToDataBase({
+    const cancelledExercise: Exercise = {
       ...this.runningExercise,
       date: new Date(),
       duration: this.runningExercise.duration * (progress / 100),
       calories: this.runningExercise.calories * (progress / 100),
       state: 'cancelled',
-    });
+    };
+    this.addDataToDataBase(cancelledExercise);
     this.runningExercise = null!;
     this.exerciseChange.next(null!);
   }
@@ -78,12 +84,23 @@ export class TrainingService {
     return { ...this.runningExercise };
   }
 
-  getCompletedOrCancelledExercises() {
-    return this.exercises?.slice();
+  fetchCompletedOrCancelledExercises() {
+    const finishedExercisesRef = collection(
+      this.fireStore,
+      'finishedExcercises'
+    );
+
+    this.finishedExercises$ = collectionData(finishedExercisesRef);
+    this.finishedExercises$.subscribe((exercises: Array<Exercise>) => {
+      this.finishedExercisesChanged.next(exercises);
+    });
   }
 
   private addDataToDataBase(exercise: Exercise) {
-    const collectionRef = collection(this.fireStore, 'finishedExcersies');
-    addDoc(collectionRef, exercise);
+    const finishedExercisesRef = collection(
+      this.fireStore,
+      'finishedExcercises'
+    );
+    addDoc(finishedExercisesRef, exercise);
   }
 }
