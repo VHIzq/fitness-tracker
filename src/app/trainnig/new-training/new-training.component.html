@@ -1,17 +1,35 @@
 <section class="new-training" fxLayout="fxLayout" fxLayoutAlign="center">
+  {{exercisesAvailable | json }}
   <form (ngSubmit)="onStartTraining(f)" #f="ngForm">
     <mat-card fxFlex="400px">
       <mat-card-title fxLayoutAlign="center">Let's training</mat-card-title>
-      <mat-card-content fxLayoutAlign="center">Select type of training</mat-card-content>
+      <mat-card-content fxLayoutAlign="center"
+        >Select type of training</mat-card-content
+      >
       <mat-form-field>
-        <mat-select placeholder="Type of workout" ngModel="ngModel" name="exercise" required="required">
-          <mat-option *ngFor="let exercise of exercisesAvailable" [value]="exercise.id">
+        <mat-select
+          placeholder="Type of workout"
+          ngModel="ngModel"
+          name="exercise"
+          required="required"
+        >
+          <mat-option
+            *ngFor="let exercise of exercisesAvailable"
+            [value]="exercise.id"
+          >
             {{ exercise.name }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-card-actions fxLayoutAlign="center">
-        <button type="submit" mat-button="mat-button" (click)="onStartTraining(f)" [disabled]="f.invalid">Start</button>
+        <button
+          type="submit"
+          mat-button="mat-button"
+          (click)="onStartTraining(f)"
+          [disabled]="f.invalid"
+        >
+          Start
+        </button>
       </mat-card-actions>
     </mat-card>
   </form>
