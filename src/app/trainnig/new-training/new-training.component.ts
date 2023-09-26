@@ -17,26 +17,25 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./new-training.component.css'],
 })
 export class NewTrainingComponent implements OnInit, OnDestroy {
-  exercisesAvailable!: Array<Exercise>;
+  exercises!: Array<Exercise>;
   exerciseSubscription!: Subscription;
-
-  @Output() trainingStart = new EventEmitter<void>();
 
   constructor(private trainingService: TrainingService) {}
 
   ngOnInit(): void {
-    this.setListExcersies();
+    this.setListExersices();
   }
 
-  public onStartTraining(form: NgForm) {
-    this.trainingService.startExercise(form.value.exercise);
-  }
-
-  setListExcersies() {
+  setListExersices() {
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
-      (exercises) => (this.exercisesAvailable = exercises)
+      (exercises) => (this.exercises = exercises)
     );
     this.trainingService.fetchAvailableExercises();
+  }
+
+  onStartTraining(form: NgForm) {
+    console.log(form.value.exercise);
+    this.trainingService.startExercise(form.value.exercise);
   }
 
   ngOnDestroy(): void {

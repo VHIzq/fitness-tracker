@@ -1,24 +1,20 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, Subject, map } from 'rxjs';
 import { Firestore, collectionData } from '@angular/fire/firestore';
-import { collection } from 'firebase/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { Exercise } from './exercise.model';
 
 @Injectable()
-export class TrainingService implements OnInit {
+export class TrainingService {
   exerciseChange = new Subject<Exercise>();
   exercisesChanged = new Subject<any>();
   exercises: Array<Exercise> = [];
   availableExercises$!: Observable<any>;
 
   private runningExercise!: Exercise;
-  private availableExercises: Exercise[] = [];
+  private availableExercises: Array<Exercise> = [];
 
   constructor(private fireStore: Firestore) {}
-
-  ngOnInit(): void {
-    this.fetchAvailableExercises();
-  }
 
   fetchAvailableExercises() {
     const collectionsRef = collection(this.fireStore, 'availableExercises');
@@ -27,11 +23,12 @@ export class TrainingService implements OnInit {
       .pipe(
         map((docArray) => {
           return docArray.map((doc: Exercise) => {
+            const { id, name, duration, calories } = doc;
             return {
-              id: doc.id,
-              name: doc.name,
-              duration: doc.duration,
-              calories: doc.calories,
+              id,
+              name,
+              duration,
+              calories,
             };
           });
         })
@@ -56,7 +53,7 @@ export class TrainingService implements OnInit {
   }
 
   completeExercises() {
-    this.exercises?.push({
+    this.addDataToDataBase({
       ...this.runningExercise,
       date: new Date(),
       state: 'completed',
@@ -66,7 +63,7 @@ export class TrainingService implements OnInit {
   }
 
   cancelExercise(progress: number) {
-    this.exercises?.push({
+    this.addDataToDataBase({
       ...this.runningExercise,
       date: new Date(),
       duration: this.runningExercise.duration * (progress / 100),
@@ -75,7 +72,6 @@ export class TrainingService implements OnInit {
     });
     this.runningExercise = null!;
     this.exerciseChange.next(null!);
-    console.log(this.exercises);
   }
 
   getRunningExercise() {
@@ -84,5 +80,10 @@ export class TrainingService implements OnInit {
 
   getCompletedOrCancelledExercises() {
     return this.exercises?.slice();
+  }
+
+  private addDataToDataBase(exercise: Exercise) {
+    const collectionRef = collection(this.fireStore, 'finishedExcersies');
+    addDoc(collectionRef, exercise);
   }
 }
