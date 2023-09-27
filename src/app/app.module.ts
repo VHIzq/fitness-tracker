@@ -24,6 +24,7 @@ import { TrainingService } from './trainnig/training.service';
 import { environment } from '../environments/environment';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { provideAuth,getAuth } from '@angular/fire/auth';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
     MatDialogModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
+    provideAuth(() => getAuth()),
   ],
   providers: [AuthService, TrainingService],
   bootstrap: [AppComponent],
