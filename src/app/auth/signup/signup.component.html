@@ -61,6 +61,7 @@
     >
       Agree to Terms and Conditions
     </mat-checkbox>
-    <button type="submit" mat-raised-button [disabled]="form.invalid" color="primary">Submit</button>
+    <button *ngIf="!isLoading" type="submit" mat-raised-button [disabled]="form.invalid" color="primary">Submit</button>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
   </form>
 </section>

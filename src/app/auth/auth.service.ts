@@ -11,6 +11,7 @@ import {
   signOut,
 } from '@angular/fire/auth';
 import { TrainingService } from '../trainnig/training.service';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class AuthService {
@@ -21,11 +22,12 @@ export class AuthService {
   constructor(
     private router: Router,
     private auth: Auth,
-    private trainigService: TrainingService
+    private trainigService: TrainingService,
+    private uiService: UIService
   ) {}
 
   initAuthListener() {
-    authState(this.auth).subscribe((user) => {
+    this.authChange.subscribe((user) => {
       if (user) {
         this.isAuthenticated = true;
         this.authChange.next(true);
@@ -36,26 +38,50 @@ export class AuthService {
         this.router.navigate(['/login']);
         this.isAuthenticated = false;
       }
-    });
+    })
+    /* authState(this.auth).subscribe((user) => {
+      if (user) {
+        this.isAuthenticated = true;
+        this.authChange.next(true);
+        this.router.navigate(['/trainig']);
+      } else {
+        this.trainigService.cancelSubscriptions();
+        this.authChange.next(false);
+        this.router.navigate(['/login']);
+        this.isAuthenticated = false;
+      }
+    }); */
   }
 
   registerUser(authData: AuthData) {
+    this.uiService.loadingServiceChanged.next(true);
     return createUserWithEmailAndPassword(
       this.auth,
       authData.email,
       authData.password
-    ).catch((error) => {
-      console.log(error);
+    )
+    .then((response) => {
+      this.uiService.loadingServiceChanged.next(false);
+    })
+    .catch((error) => {
+      this.uiService.loadingServiceChanged.next(false);
+      this.uiService.showSnackBar(error.message, undefined, 3000);
     });
   }
 
   login(authData: AuthData) {
+    this.uiService.loadingServiceChanged.next(true);
     return signInWithEmailAndPassword(
       this.auth,
       authData.email,
       authData.password
-    ).catch((error) => {
-      console.log(error);
+    )
+    .then((response) => {
+      this.uiService.loadingServiceChanged.next(false);
+    })
+    .catch((error) => {
+      this.uiService.loadingServiceChanged.next(false);
+      this.uiService.showSnackBar(error.message, undefined, 3000);
     });
   }
 
