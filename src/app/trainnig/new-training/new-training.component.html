@@ -1,18 +1,19 @@
-<section class="new-training" fxLayout fxLayoutAlign="center">
+<section class="new-training" fxLayout="fxLayout" fxLayoutAlign="center">
   <form (ngSubmit)="onStartTraining(f)" #f="ngForm">
     <mat-card fxFlex="400px" fxFlex.xs="100%">
       <mat-card-title fxLayoutAlign="center">Let's training</mat-card-title>
       <mat-card-content fxLayoutAlign="center">Select type of training</mat-card-content>
-      <mat-form-field>
-        <mat-select placeholder="Type of workout" ngModel name="exercise" required>
+      <mat-form-field *ngIf="!isLoading && exercises">
+        <mat-select placeholder="Type of workout" ngModel="ngModel" name="exercise" required="required">
           <mat-option *ngFor="let exercise of exercises" [value]="exercise.id">
-            {{ exercise.name | json }}
+            {{ exercise.name }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <mat-card-actions fxLayoutAlign="center">
-        <button type="submit" mat-button (click)="onStartTraining(f)" [disabled]="f.invalid">
-          Start
+      <mat-card-actions fxLayoutAlign="center" *ngIf="!isLoading">
+        <button *ngIf="exercises" type="submit" mat-button="mat-button" (click)="onStartTraining(f)" [disabled]="f.invalid"></button>
+        <button *ngIf="!exercises" type="submit" mat-button="mat-button" (click)="fetchExercises()" [disabled]="f.invalid">
+          Fetch again
         </button>
       </mat-card-actions>
     </mat-card>

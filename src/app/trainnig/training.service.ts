@@ -3,6 +3,7 @@ import { Observable, Subject, Subscription, map } from 'rxjs';
 import { Firestore, collectionData } from '@angular/fire/firestore';
 import { addDoc, collection } from 'firebase/firestore';
 import { Exercise } from './exercise.model';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class TrainingService {
@@ -15,7 +16,7 @@ export class TrainingService {
   private availableExercises: Array<Exercise> = [];
   private firebaseSubscriptions!: Array<Subscription>;
 
-  constructor(private fireStore: Firestore) {}
+  constructor(private fireStore: Firestore, private uiService: UIService) {}
 
   fetchAvailableExercises() {
     const availableExercisesRef = collection(
@@ -38,10 +39,14 @@ export class TrainingService {
         })
       )
       .subscribe((exercises: Array<Exercise>) => {
-        
+        this.uiService.loadingServiceChanged.next(false);
         this.availableExercises = exercises;
         this.exercisesChanged.next([...this.availableExercises]);
-      }));
+      }, (error) => {
+        this.uiService.loadingServiceChanged.next(false);
+        this.uiService.showSnackBar('Fetching Exercise failed, please tray again later', undefined, 3000);
+        this.exercisesChanged.next(null);
+      } ));
   }
 
   startExercise(selectedId: string) {
