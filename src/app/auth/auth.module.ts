@@ -1,10 +1,8 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { SignupComponent } from "./signup/signup.component";
 import { LogginComponent } from "./loggin/loggin.component";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { MaterialModule } from "../material.module";
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { ReactiveFormsModule } from "@angular/forms";
+import { SharedModule } from "../shared/shared.modules";
 
 @NgModule({
   declarations: [
@@ -12,11 +10,8 @@ import { FlexLayoutModule } from "@angular/flex-layout";
     LogginComponent,
   ],
   imports: [
-    CommonModule,
-    FormsModule,
     ReactiveFormsModule,
-    MaterialModule,
-    FlexLayoutModule
+    SharedModule,
   ],
   exports: []
 })
