@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { TrainnigComponent } from './trainnig/trainnig.component';
 import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
@@ -11,8 +10,9 @@ const routes: Routes = [
   },
   {
     path: 'training',
-    component: TrainnigComponent,
-    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./trainnig/training.module').then((m) => m.TrainingModule),
+      canLoad:  [AuthGuard]
   },
 ];
 
