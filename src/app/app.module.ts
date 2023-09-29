@@ -27,7 +27,6 @@ import { TrainingModule } from './trainnig/training.module';
     AppComponent,
     SignupComponent,
     LogginComponent,
-    
     WelcomeComponent,
     SidenavListComponent,
     HeaderComponent,
