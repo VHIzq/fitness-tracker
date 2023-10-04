@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription, map } from 'rxjs';
 import { Observable } from 'rxjs-compat';
-import * as fromRoot  from '../../app.reducer';
+import * as fromRoot from '../../app.reducer';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -23,7 +23,9 @@ export class LogginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isLoading$ = this.store.pipe(map(state => this.store.select(fromRoot.getIsLoading)));
+    this.isLoading$ = this.store.pipe(
+      map((state) => this.store.select(fromRoot.getIsLoading))
+    );
     /* this.loadingSubs = this.uiService.loadingServiceChanged.subscribe(
       (isLoading) => {
         this.isLoading = isLoading;
