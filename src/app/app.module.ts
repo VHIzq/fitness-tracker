@@ -6,8 +6,6 @@ import { environment } from '../environments/environment';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { provideAuth, getAuth, AuthModule } from '@angular/fire/auth';
-import { SignupComponent } from './auth/signup/signup.component';
-import { LogginComponent } from './auth/loggin/loggin.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SidenavListComponent } from './navigation/sidenav-list/sidenav-list.component';
@@ -17,6 +15,8 @@ import { AuthService } from './auth/auth.service';
 import { TrainingService } from './trainnig/training.service';
 import { UIService } from './shared/ui.service';
 import { SharedModule } from './shared/shared.modules';
+import { StoreModule } from '@ngrx/store';
+import { reducers } from './app.reducer';
 
 @NgModule({
   declarations: [
@@ -24,8 +24,6 @@ import { SharedModule } from './shared/shared.modules';
     WelcomeComponent,
     SidenavListComponent,
     HeaderComponent,
-    SignupComponent,
-    LogginComponent
   ],
   imports: [
     AppRoutingModule,
@@ -37,6 +35,7 @@ import { SharedModule } from './shared/shared.modules';
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideFirestore(() => getFirestore()),
     provideAuth(() => getAuth()),
+    StoreModule.forRoot(reducers, {}),
   ],
   providers: [AuthService, TrainingService, UIService],
   bootstrap: [AppComponent],

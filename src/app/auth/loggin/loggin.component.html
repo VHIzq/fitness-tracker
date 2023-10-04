@@ -11,5 +11,5 @@
       <input matInput="matInput" formControlName="password" type="password" name="password" id="password" placeholder="Introduce your password"/>
       <mat-hint>Must to be 8 characters length</mat-hint>
     </mat-form-field>
-    <button *ngIf="!isLoading" [disabled]="!loginForm.valid" color="primary" mat-button="mat-button" type="submit">Login</button>
-    <mat-spinner *ngIf="isLoading" ></mat-spinner>
+    <button *ngIf="!(isLoading$ | async)" [disabled]="!loginForm.valid" color="primary" mat-button="mat-button" type="submit">Login</button>
+    <mat-spinner *ngIf="isLoading$ | async" ></mat-spinner>

@@ -5,13 +5,15 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   Auth,
-  authState,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from '@angular/fire/auth';
 import { TrainingService } from '../trainnig/training.service';
 import { UIService } from '../shared/ui.service';
+import { Store } from '@ngrx/store';
+import * as fromRoot from '../app.reducer';
+import * as UI from '../shared/ui.actions';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +25,8 @@ export class AuthService {
     private router: Router,
     private auth: Auth,
     private trainigService: TrainingService,
-    private uiService: UIService
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
   ) {}
 
   initAuthListener() {
@@ -39,48 +42,42 @@ export class AuthService {
         this.isAuthenticated = false;
       }
     })
-    /* authState(this.auth).subscribe((user) => {
-      if (user) {
-        this.isAuthenticated = true;
-        this.authChange.next(true);
-        this.router.navigate(['/trainig']);
-      } else {
-        this.trainigService.cancelSubscriptions();
-        this.authChange.next(false);
-        this.router.navigate(['/login']);
-        this.isAuthenticated = false;
-      }
-    }); */
   }
 
   registerUser(authData: AuthData) {
-    this.uiService.loadingServiceChanged.next(true);
+    //this.uiService.loadingServiceChanged.next(true);
+    this.store.dispatch(new UI.StartLoading());
     return createUserWithEmailAndPassword(
       this.auth,
       authData.email,
       authData.password
     )
     .then((response) => {
-      this.uiService.loadingServiceChanged.next(false);
+      //this.uiService.loadingServiceChanged.next(false);
+      this.store.dispatch({type: 'STOP_LOADING'});
     })
     .catch((error) => {
-      this.uiService.loadingServiceChanged.next(false);
+      //this.uiService.loadingServiceChanged.next(false);
+      this.store.dispatch(new UI.StopLoading);
       this.uiService.showSnackBar(error.message, undefined, 3000);
     });
   }
 
   login(authData: AuthData) {
-    this.uiService.loadingServiceChanged.next(true);
+    //this.uiService.loadingServiceChanged.next(true);
+    this.store.dispatch(new UI.StartLoading);
     return signInWithEmailAndPassword(
       this.auth,
       authData.email,
       authData.password
     )
     .then((response) => {
-      this.uiService.loadingServiceChanged.next(false);
+      //this.uiService.loadingServiceChanged.next(false);
+      this.store.dispatch(new UI.StopLoading);
     })
     .catch((error) => {
-      this.uiService.loadingServiceChanged.next(false);
+      //this.uiService.loadingServiceChanged.next(false);
+      this.store.dispatch(new UI.StopLoading);
       this.uiService.showSnackBar(error.message, undefined, 3000);
     });
   }
