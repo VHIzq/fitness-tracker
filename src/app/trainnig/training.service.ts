@@ -4,6 +4,9 @@ import { Firestore, collectionData } from '@angular/fire/firestore';
 import { addDoc, collection } from 'firebase/firestore';
 import { Exercise } from './exercise.model';
 import { UIService } from '../shared/ui.service';
+import * as fromRoot from '../app.reducer';
+import { Store } from '@ngrx/store';
+import * as UI from '../shared/ui.actions';
 
 @Injectable()
 export class TrainingService {
@@ -16,7 +19,11 @@ export class TrainingService {
   private availableExercises: Array<Exercise> = [];
   private firebaseSubscriptions!: Array<Subscription>;
 
-  constructor(private fireStore: Firestore, private uiService: UIService) {}
+  constructor(
+    private fireStore: Firestore,
+    private uiService: UIService,
+    private store: Store<fromRoot.State>
+  ) {}
 
   fetchAvailableExercises() {
     const availableExercisesRef = collection(
@@ -24,29 +31,40 @@ export class TrainingService {
       'availableExercises'
     );
     this.availableExercises$ = collectionData(availableExercisesRef);
-    this.firebaseSubscriptions.push(this.availableExercises$
-      .pipe(
-        map((docArray) => {
-          return docArray.map((doc: Exercise) => {
-            const { id, name, duration, calories } = doc;
-            return {
-              id,
-              name,
-              duration,
-              calories,
-            };
-          });
-        })
-      )
-      .subscribe((exercises: Array<Exercise>) => {
-        this.uiService.loadingServiceChanged.next(false);
-        this.availableExercises = exercises;
-        this.exercisesChanged.next([...this.availableExercises]);
-      }, (error) => {
-        this.uiService.loadingServiceChanged.next(false);
-        this.uiService.showSnackBar('Fetching Exercise failed, please tray again later', undefined, 3000);
-        this.exercisesChanged.next(null);
-      } ));
+    this.firebaseSubscriptions.push(
+      this.availableExercises$
+        .pipe(
+          map((docArray) => {
+            return docArray.map((doc: Exercise) => {
+              const { id, name, duration, calories } = doc;
+              return {
+                id,
+                name,
+                duration,
+                calories,
+              };
+            });
+          })
+        )
+        .subscribe(
+          (exercises: Array<Exercise>) => {
+            // this.uiService.loadingServiceChanged.next(false);
+            this.store.dispatch(new UI.StopLoading());
+            this.availableExercises = exercises;
+            this.exercisesChanged.next([...this.availableExercises]);
+          },
+          (error) => {
+            //this.uiService.loadingServiceChanged.next(false);
+            this.store.dispatch(new UI.StopLoading());
+            this.uiService.showSnackBar(
+              'Fetching Exercise failed, please tray again later',
+              undefined,
+              3000
+            );
+            this.exercisesChanged.next(null);
+          }
+        )
+    );
   }
 
   startExercise(selectedId: string) {
@@ -98,12 +116,16 @@ export class TrainingService {
     );
 
     this.finishedExercises$ = collectionData(finishedExercisesRef);
-    this.firebaseSubscriptions.push(this.finishedExercises$.subscribe((exercises: Array<Exercise>) => {
-      this.finishedExercisesChanged.next(exercises);
-    }));
+    this.firebaseSubscriptions.push(
+      this.finishedExercises$.subscribe((exercises: Array<Exercise>) => {
+        this.finishedExercisesChanged.next(exercises);
+      })
+    );
   }
   cancelSubscriptions() {
-    this.firebaseSubscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.firebaseSubscriptions.forEach((subscription) =>
+      subscription.unsubscribe()
+    );
   }
 
   private addDataToDataBase(exercise: Exercise) {

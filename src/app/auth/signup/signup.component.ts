@@ -19,8 +19,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isLoading$ = this.store.pipe(
       map((state) => this.store.select(fromRoot.getIsLoading))
-    )
-
+    );
     this.limitMaxDate();
   }
 
@@ -41,10 +40,10 @@ export class SignupComponent implements OnInit, OnDestroy {
     this.maxDate.setFullYear(this.maxDate.getFullYear() - 18);
   }
 
-  ngOnDestroy(): void {
+  /* ngOnDestroy(): void {
     const hasSuscriptions = !!this.loadingSubs;
     if (hasSuscriptions) {
       this.loadingSubs.unsubscribe();
     }
-  }
+  } */
 }
