@@ -11,7 +11,6 @@ import { Store } from '@ngrx/store';
 })
 export class SidenavListComponent implements OnInit {
   isAuth$!: Observable<boolean>;
-  authSubscription!: Subscription;
 
   @Output() closeSidenav = new EventEmitter<void>();
 

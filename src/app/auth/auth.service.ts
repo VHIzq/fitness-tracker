@@ -19,8 +19,6 @@ import * as AuthActions from './auth.actions';
 @Injectable()
 export class AuthService {
   authChange = new Subject<boolean>();
-  private user!: User | null;
-  private isAuthenticated = false;
 
   constructor(
     private router: Router,
@@ -44,7 +42,6 @@ export class AuthService {
   }
 
   registerUser(authData: AuthData) {
-    //this.uiService.loadingServiceChanged.next(true);
     this.store.dispatch(new UI.StartLoading());
     return createUserWithEmailAndPassword(
       this.afauth,
@@ -61,7 +58,6 @@ export class AuthService {
   }
 
   login(authData: AuthData) {
-    //this.uiService.loadingServiceChanged.next(true);
     this.store.dispatch(new UI.StartLoading());
     return signInWithEmailAndPassword(
       this.afauth,

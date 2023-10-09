@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, Subscription, map, take } from 'rxjs';
+import { Observable, Subscription, map, take } from 'rxjs';
 import { Firestore, collectionData } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
 import { addDoc, collection } from 'firebase/firestore';
@@ -11,12 +11,8 @@ import * as UI from '../shared/ui.actions';
 
 @Injectable()
 export class TrainingService {
-  exerciseChange = new Subject<Exercise>();
-  exercisesChanged = new Subject<any>();
-  finishedExercisesChanged = new Subject<Array<Exercise>>();
   private availableExercises$!: Observable<any>;
   private finishedExercises$!: Observable<any>;
-  private runningExercise!: Exercise;
   private firebaseSubscriptions!: Array<Subscription>;
 
   constructor(
@@ -61,7 +57,7 @@ export class TrainingService {
               undefined,
               3000
             );
-            this.exercisesChanged.next(null);
+            this.store.dispatch(new UI.StopLoading());
           }
         )
     );
@@ -96,7 +92,7 @@ export class TrainingService {
           this.addDataToDataBase({
             ...exercise,
             date: new Date(),
-            state: 'completed',
+            state: 'cancelled',
             duration: exercise?.duration * (progress / 100),
             calories: exercise?.calories * (progress / 100),
           });
@@ -120,6 +116,7 @@ export class TrainingService {
       })
     );
   }
+
   cancelSubscriptions() {
     this.firebaseSubscriptions.forEach((subscription) =>
       subscription.unsubscribe()
