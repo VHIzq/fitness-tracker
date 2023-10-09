@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, Subscription, map } from 'rxjs';
+import { Observable, Subject, Subscription, map, take } from 'rxjs';
 import { Firestore, collectionData } from '@angular/fire/firestore';
 import { Store } from '@ngrx/store';
 import { addDoc, collection } from 'firebase/firestore';
@@ -50,7 +50,9 @@ export class TrainingService {
         .subscribe(
           (exercises: Array<Exercise>) => {
             this.store.dispatch(new UI.StopLoading());
-            this.store.dispatch(new TrainingActions.SetAvailableTraining(exercises))
+            this.store.dispatch(
+              new TrainingActions.SetAvailableTraining(exercises)
+            );
           },
           (error) => {
             this.store.dispatch(new UI.StopLoading());
@@ -66,34 +68,41 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string) {
-    this.store.dispatch(new TrainingActions.StartTraining(selectedId))
+    this.store.dispatch(new TrainingActions.StartTraining(selectedId));
   }
 
   completeExercises() {
-    const newExercise: Exercise = {
-      ...this.runningExercise,
-      date: new Date(),
-      state: 'completed',
-    };
-    this.addDataToDataBase(newExercise);
-    this.runningExercise = null!;
-    this.exerciseChange.next(null!);
-  }
-
-  cancelExercise(progress: number) {
-    const cancelledExercise: Exercise = {
-      ...this.runningExercise,
-      date: new Date(),
-      duration: this.runningExercise.duration * (progress / 100),
-      calories: this.runningExercise.calories * (progress / 100),
-      state: 'cancelled',
-    };
-    this.addDataToDataBase(cancelledExercise);
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe((exercise) => {
+        if (exercise) {
+          this.addDataToDataBase({
+            ...exercise,
+            date: new Date(),
+            state: 'completed',
+          });
+        }
+      });
     this.store.dispatch(new TrainingActions.StopTrainings());
   }
 
-  getRunningExercise() {
-    return { ...this.runningExercise };
+  cancelExercise(progress: number) {
+    this.store
+      .select(fromTraining.getActiveTraining)
+      .pipe(take(1))
+      .subscribe((exercise) => {
+        if (exercise) {
+          this.addDataToDataBase({
+            ...exercise,
+            date: new Date(),
+            state: 'completed',
+            duration: exercise?.duration * (progress / 100),
+            calories: exercise?.calories * (progress / 100),
+          });
+        }
+      });
+    this.store.dispatch(new TrainingActions.StopTrainings());
   }
 
   fetchCompletedOrCancelledExercises() {
@@ -105,7 +114,9 @@ export class TrainingService {
     this.finishedExercises$ = collectionData(finishedExercisesRef);
     this.firebaseSubscriptions.push(
       this.finishedExercises$.subscribe((exercises: Array<Exercise>) => {
-        this.store.dispatch(new TrainingActions.SetAvailableTraining(exercises));
+        this.store.dispatch(
+          new TrainingActions.SetAvailableTraining(exercises)
+        );
       })
     );
   }
