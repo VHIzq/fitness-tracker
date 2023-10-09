@@ -80,8 +80,4 @@ export class AuthService {
   logout() {
     return signOut(this.afauth);
   }
-
-  isAuth() {
-    return this.isAuthenticated;
-  }
 }
