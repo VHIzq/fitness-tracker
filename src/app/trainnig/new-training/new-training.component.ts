@@ -1,44 +1,35 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-} from '@angular/core';
-
-import { TrainingService } from '../training.service';
-import { Exercise } from '../exercise.model';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Subscription } from 'rxjs';
-import { UIService } from 'src/app/shared/ui.service';
+import { Observable, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Exercise } from '../exercise.model';
+import { TrainingService } from '../training.service';
+import * as fromTraining from '../training.reducer';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-new-training',
   templateUrl: './new-training.component.html',
   styleUrls: ['./new-training.component.css'],
 })
-export class NewTrainingComponent implements OnInit, OnDestroy {
-  exercises!: Array<Exercise>;
+export class NewTrainingComponent implements OnInit {
+  exercises$!: Observable<Array<Exercise>>;
   exerciseSubscription!: Subscription;
-  isLoading = false;
+  isLoading$!: Observable<boolean>;
   private loadingSubs!: Subscription;
 
   constructor(
     private trainingService: TrainingService,
-    private uiService: UIService
+    private store: Store<fromTraining.State>
   ) {}
 
   ngOnInit(): void {
-    this.loadingSubs = this.uiService.loadingServiceChanged.subscribe(
-      (isLoading) => {
-        this.isLoading = isLoading;
-      }
-    );
+    this.isLoading$ = this.store.select(fromRoot.getIsLoading);
     this.setListExersices();
   }
 
   setListExersices() {
-    this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(
-      (exercises) => (this.exercises = exercises)
-    );
+    this.exercises$ = this.store.select(fromTraining.getAvailableTrainings);
     this.fetchExercises();
   }
 
@@ -48,13 +39,5 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
 
   onStartTraining(form: NgForm) {
     this.trainingService.startExercise(form.value.exercise);
-  }
-
-  ngOnDestroy(): void {
-    const hasSuscriptions = !!this.loadingSubs || !!this.exerciseSubscription;
-    if (hasSuscriptions) {
-      this.exerciseSubscription.unsubscribe();
-      this.loadingSubs.unsubscribe();
-    }
   }
 }
