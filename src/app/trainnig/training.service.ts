@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, Subscription, map } from 'rxjs';
 import { Firestore, collectionData } from '@angular/fire/firestore';
+import { Store } from '@ngrx/store';
 import { addDoc, collection } from 'firebase/firestore';
 import { Exercise } from './exercise.model';
 import { UIService } from '../shared/ui.service';
-import * as fromRoot from '../app.reducer';
-import { Store } from '@ngrx/store';
+import * as fromTraining from './training.reducer';
+import * as TrainingActions from './training.actions';
 import * as UI from '../shared/ui.actions';
 
 @Injectable()
@@ -16,16 +17,16 @@ export class TrainingService {
   private availableExercises$!: Observable<any>;
   private finishedExercises$!: Observable<any>;
   private runningExercise!: Exercise;
-  private availableExercises: Array<Exercise> = [];
   private firebaseSubscriptions!: Array<Subscription>;
 
   constructor(
     private fireStore: Firestore,
     private uiService: UIService,
-    private store: Store<fromRoot.State>
+    private store: Store<fromTraining.State>
   ) {}
 
   fetchAvailableExercises() {
+    this.store.dispatch(new UI.StartLoading());
     const availableExercisesRef = collection(
       this.fireStore,
       'availableExercises'
@@ -48,13 +49,10 @@ export class TrainingService {
         )
         .subscribe(
           (exercises: Array<Exercise>) => {
-            // this.uiService.loadingServiceChanged.next(false);
             this.store.dispatch(new UI.StopLoading());
-            this.availableExercises = exercises;
-            this.exercisesChanged.next([...this.availableExercises]);
+            this.store.dispatch(new TrainingActions.SetAvailableTraining(exercises))
           },
           (error) => {
-            //this.uiService.loadingServiceChanged.next(false);
             this.store.dispatch(new UI.StopLoading());
             this.uiService.showSnackBar(
               'Fetching Exercise failed, please tray again later',
@@ -68,17 +66,7 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string) {
-    const isExerciseSelected = this.availableExercises.find(
-      (exercise: Exercise) => exercise.id === selectedId
-    );
-
-    if (isExerciseSelected) {
-      this.runningExercise = isExerciseSelected;
-      this.exerciseChange.next({ ...this.runningExercise });
-    } else {
-      console.log('Not found exercise selected');
-      //* add mat dialog
-    }
+    this.store.dispatch(new TrainingActions.StartTraining(selectedId))
   }
 
   completeExercises() {
@@ -101,8 +89,7 @@ export class TrainingService {
       state: 'cancelled',
     };
     this.addDataToDataBase(cancelledExercise);
-    this.runningExercise = null!;
-    this.exerciseChange.next(null!);
+    this.store.dispatch(new TrainingActions.StopTrainings());
   }
 
   getRunningExercise() {
@@ -118,7 +105,7 @@ export class TrainingService {
     this.finishedExercises$ = collectionData(finishedExercisesRef);
     this.firebaseSubscriptions.push(
       this.finishedExercises$.subscribe((exercises: Array<Exercise>) => {
-        this.finishedExercisesChanged.next(exercises);
+        this.store.dispatch(new TrainingActions.SetAvailableTraining(exercises));
       })
     );
   }

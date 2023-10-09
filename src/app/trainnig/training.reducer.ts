@@ -1,4 +1,4 @@
-import { Action } from '@ngrx/store';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { Exercise } from './exercise.model';
 import * as fromRoot from '../app.reducer';
 import {
@@ -25,7 +25,7 @@ const initialState: TrainingState = {
   activeTrainig: undefined,
 };
 
-export function authReducer(state = initialState, action: TrainingActions) {
+export function trainingReducer(state = initialState, action: TrainingActions) {
   switch (action.type) {
     case SET_AVAILABLE_TRANINGS:
       return {
@@ -42,12 +42,14 @@ export function authReducer(state = initialState, action: TrainingActions) {
     case START_TRAINING:
       return {
         ...state,
-        activeTrainig: action.payload,
+        activeTrainig: {...state.availableExercises.find(
+          (exercise: Exercise) => exercise.id === action.payload
+        )}
       };
 
     case STOP_TRAINING:
       return {
-        activeTrainig: null,
+        activeTrainig: undefined,
       };
     default: {
       return state;
@@ -55,6 +57,23 @@ export function authReducer(state = initialState, action: TrainingActions) {
   }
 }
 
-export const getAvailableTrainings = (state: TrainingState) => state.availableExercises;
-export const getFinishedExercises = (state: TrainingState) => state.finishedExercises;
-export const getActiveTraining = (state: TrainingState) => state.activeTrainig;
+export const getTrainingState =
+  createFeatureSelector<TrainingState>('training');
+
+export const getAvailableTrainings = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.availableExercises
+);
+export const getFinishedExercises = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.finishedExercises
+);
+export const getActiveTraining = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.activeTrainig
+);
+
+export const getIsTraining = createSelector(
+  getTrainingState,
+  (state: TrainingState) => state.activeTrainig !== undefined
+);
